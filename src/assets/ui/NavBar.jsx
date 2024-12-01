@@ -4,6 +4,7 @@ const StyledNavBar = styled.nav`
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 2.4rem;
 `;
 
 const StyledLink = styled.a`
