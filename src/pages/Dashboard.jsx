@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import ScannerComp from "../features/ScannerComp";
 
 const StyledDashBoard = styled.div`
   color: #aaa;
@@ -13,6 +14,7 @@ function Dashboard() {
   return (
     <StyledDashBoard>
       <StyledHeader>Scan Ticket here</StyledHeader>
+      <ScannerComp />
     </StyledDashBoard>
   );
 }
