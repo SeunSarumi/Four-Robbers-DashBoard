@@ -8,7 +8,8 @@ const QRScanner = () => {
   const validateTicket = async (id) => {
     try {
       const response = await fetch(
-        `https://blank-lisha-adesire-private-limited-d3291de0.koyeb.app/ticketing/api/v1/ticket/scan/${id}`,
+        // `https://blank-lisha-adesire-private-limited-d3291de0.koyeb.app/ticketing/api/v1/ticket/scan/${id}`,//TODO: RESTORE
+        `https://blank-lisha-adesire-private-limited-d3291de0.koyeb.app/ticketing/api/v1/ticket/check/${id}`,
         {
           method: "GET",
         }
@@ -35,9 +36,24 @@ const QRScanner = () => {
 
     scanner.render(
       (decodedText) => {
-        setTicketID(decodedText);
-        validateTicket(decodedText);
-        scanner.clear(); // Stop scanning once a QR code is scanned
+
+        // Extract ticket details from the QR code text
+        const ticketPattern = /^BEGIN:EVTICKET\s+VERSION:(\d+\.\d+)\s+TID:([a-zA-Z0-9_\-]+)\s+END:EVTICKET$/;
+        const match = decodedText.trim().match(ticketPattern);
+        console.log(decodedText);
+
+        console.log(match);
+
+        if (match) {
+          const [, , ticketId] = match;
+
+          setTicketID(ticketId);
+          validateTicket(ticketId);
+          scanner.clear(); // Stop scanning once a QR code is scanned
+        } else {
+          setValidationResult("Invalid QR Code format");
+          scanner.clear(); // Stop scanning once a QR code is scanned
+        }
       },
       (error) => {
         console.warn("QR Scan Error:", error);
