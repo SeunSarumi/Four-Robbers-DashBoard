@@ -29,24 +29,26 @@ const LoginPage = () => {
         requestData
       );
 
-      // Extract the relevant data from the response
-      const { token, userType } = response.data;
+      // Extract the accessToken from the nested response structure
+      const accessToken = response.data?.data?.accessToken;
 
-      // Validate the userType and handle successful login
-      if (token && userType === "ADMIN") {
-        localStorage.setItem("authToken", token); // Save token for session management
-        localStorage.setItem("userType", userType); // Save userType for role management
+      if (accessToken) {
+        // Save the accessToken in localStorage
+        localStorage.setItem("accessToken", accessToken);
 
         alert("Login successful! Redirecting to the admin dashboard...");
 
+        // Redirect to the admin dashboard
         navigate("/dashboard");
       } else {
-        throw new Error(
-          `Unauthorized access. Expected userType to be "ADMIN", but received: ${userType}`
-        );
+        throw new Error("Access token is missing from the response.");
       }
     } catch (error) {
       console.error("Login failed:", error);
+
+      // Log the error response data if available
+      console.error("Error Response Data:", error.response?.data);
+
       setError(
         error.response?.data?.message || "An error occurred during login"
       );
