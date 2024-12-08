@@ -17,7 +17,7 @@ const Container = styled.div`
 function AppLayout() {
   return (
     <StyledAppLayout>
-      <NavBar />
+      {/* <NavBar /> */}
       <Main>
         <Container>
           <Outlet />

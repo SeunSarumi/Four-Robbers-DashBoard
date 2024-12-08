@@ -3,6 +3,7 @@ import "./App.css";
 import AppLayout from "./assets/ui/AppLayout";
 import Dashboard from "./pages/Dashboard";
 import Error from "./assets/ui/Error";
+import Login from "./pages/Login";
 
 const router = createBrowserRouter([
   {
@@ -10,6 +11,12 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
+        errorElement: <Error />,
+        element: <Login />,
+      },
+
+      {
+        path: "/dashboard",
         errorElement: <Error />,
         element: <Dashboard />,
       },
