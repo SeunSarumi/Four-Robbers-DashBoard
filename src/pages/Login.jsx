@@ -12,40 +12,50 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
+    // Prepare the request payload
+    const requestData = {
+      email,
+      password,
+      deviceToken: "", // Add an empty deviceToken or generate one if required
+      userType: "ADMIN", // Explicitly include the userType as "ADMIN"
+    };
+
+    console.log("Request being sent:", requestData); // Log the request for debugging
+
     try {
+      // Send the login request
       const response = await axios.post(
         "https://blank-lisha-adesire-private-limited-d3291de0.koyeb.app/ticketing/api/v1/auth/login",
-        {
-          email,
-          password,
-        }
+        requestData
       );
 
       // Extract the relevant data from the response
       const { token, userType } = response.data;
 
-      // Check if userType and userType.name are valid
-      if (token && userType?.name === "ADMIN") {
+      // Validate the userType and handle successful login
+      if (token && userType === "ADMIN") {
         localStorage.setItem("authToken", token); // Save token for session management
-        localStorage.setItem("userType", userType.name); // Save userType for role management
+        localStorage.setItem("userType", userType); // Save userType for role management
 
         alert("Login successful! Redirecting to the admin dashboard...");
 
         navigate("/dashboard");
       } else {
         throw new Error(
-          `Unauthorized access. Expected userType.name to be "ADMIN", but received: ${userType?.name}`
+          `Unauthorized access. Expected userType to be "ADMIN", but received: ${userType}`
         );
       }
     } catch (error) {
       console.error("Login failed:", error);
-      setError(error.response?.data?.message || "An error occurred");
+      setError(
+        error.response?.data?.message || "An error occurred during login"
+      );
     }
   };
 
   return (
     <div style={{ maxWidth: "400px", margin: "auto", padding: "20px" }}>
-      <h1>Login</h1>
+      <h1>Admin Login</h1>
       <form onSubmit={handleLogin}>
         <div>
           <label>Email:</label>
