@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import styles from "./Login.module.css";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -56,41 +57,31 @@ const LoginPage = () => {
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "auto", padding: "20px" }}>
-      <h1>Admin Login</h1>
-      <form onSubmit={handleLogin}>
+    <div className={styles.container}>
+      <h1 className={styles.header}> Login</h1>
+      <form className={styles.form} onSubmit={handleLogin}>
         <div>
           <label>Email:</label>
           <input
+            className={styles.input}
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
           />
         </div>
         <div>
           <label>Password:</label>
           <input
+            className={styles.input}
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
           />
         </div>
         {error && <p style={{ color: "red" }}>{error}</p>}
-        <button
-          type="submit"
-          style={{
-            width: "100%",
-            padding: "10px",
-            backgroundColor: "#007bff",
-            color: "white",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
+        <button className={styles.btn} type="submit">
           Login
         </button>
       </form>
