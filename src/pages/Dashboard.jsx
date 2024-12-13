@@ -1,9 +1,13 @@
 import styled from "styled-components";
 
 import QRScanner from "../features/QrScanner";
+import TicketValidator from "../features/TicketValidator";
 
 const StyledDashBoard = styled.div`
   color: #aaa;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
 `;
 
 const StyledHeader = styled.h1`
@@ -21,6 +25,7 @@ function Dashboard() {
     <StyledDashBoard>
       <StyledHeader>Scan Ticket here</StyledHeader>
       <QRScanner />
+      <TicketValidator />
     </StyledDashBoard>
   );
 }
