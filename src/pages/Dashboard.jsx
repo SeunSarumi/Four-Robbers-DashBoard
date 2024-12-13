@@ -9,6 +9,11 @@ const StyledDashBoard = styled.div`
 const StyledHeader = styled.h1`
   font-size: 3rem;
   text-align: center;
+  margin-bottom: 4rem;
+
+  @media only screen and (max-width: 600px) {
+    font-size: 2rem;
+  }
 `;
 
 function Dashboard() {

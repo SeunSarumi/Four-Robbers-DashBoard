@@ -1,29 +1,55 @@
 import { useEffect, useState } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
+import toast, { Toaster } from "react-hot-toast";
+import styles from "./QrScanner.module.css";
 
 const QRScanner = () => {
   const [ticketID, setTicketID] = useState("");
   const [validationResult, setValidationResult] = useState(null);
+  const [isScanning, setIsScanning] = useState(true); // Control scanning
 
   const validateTicket = async (id) => {
     try {
       const response = await fetch(
-        // `https://blank-lisha-adesire-private-limited-d3291de0.koyeb.app/ticketing/api/v1/ticket/scan/${id}`,//TODO: RESTORE
         `https://blank-lisha-adesire-private-limited-d3291de0.koyeb.app/ticketing/api/v1/ticket/check/${id}`,
         {
           method: "GET",
         }
       );
 
+      // Always parse the response body as JSON, regardless of the status code
+      const data = await response.json().catch(() => {
+        // Handle cases where the response is not valid JSON
+        throw new Error("Invalid JSON response from the server");
+      });
+
+      console.log("Response:", {
+        body: data.message,
+      });
+
       if (!response.ok) {
-        throw new Error("Failed to validate the ticket");
+        toast.error(data.message, {
+          duration: 4000,
+          style: {
+            padding: "40px 40px",
+            marginTop: "15rem",
+          },
+        });
+        // Log the error response and include it in the validation result
+        throw new Error(
+          data?.message || `Validation failed with status ${response.status}`
+        );
       }
 
-      const data = await response.json();
-      setValidationResult(data);
+      // If the response is OK, update the validation result
+      setValidationResult({ success: true, ...data });
+      toast.success("Ticket scanned successfully!");
     } catch (error) {
       console.error("Validation error:", error);
-      setValidationResult({ success: false, error: error.message });
+      setValidationResult({
+        success: false,
+        error: error.message,
+      });
     }
   };
 
@@ -36,24 +62,31 @@ const QRScanner = () => {
 
     scanner.render(
       (decodedText) => {
+        if (!isScanning) return; // Ignore if scanning is temporarily paused
+
+        setIsScanning(false); // Stop scanning temporarily
 
         // Extract ticket details from the QR code text
-        const ticketPattern = /^BEGIN:EVTICKET\s+VERSION:(\d+\.\d+)\s+TID:([a-zA-Z0-9_\-]+)\s+END:EVTICKET$/;
+        const ticketPattern =
+          /^BEGIN:EVTICKET\s+VERSION:(\d+\.\d+)\s+TID:([a-zA-Z0-9_\-]+)\s+END:EVTICKET$/;
         const match = decodedText.trim().match(ticketPattern);
-        console.log(decodedText);
 
+        console.log(decodedText);
         console.log(match);
 
         if (match) {
           const [, , ticketId] = match;
 
           setTicketID(ticketId);
-          validateTicket(ticketId);
-          scanner.clear(); // Stop scanning once a QR code is scanned
+          validateTicket(ticketId); // Validate the scanned ticket ID
         } else {
-          setValidationResult("Invalid QR Code format");
-          scanner.clear(); // Stop scanning once a QR code is scanned
+          toast.error("Invalid QR Code format");
         }
+
+        // Resume scanning after 2 seconds
+        setTimeout(() => {
+          setIsScanning(true);
+        }, 2000);
       },
       (error) => {
         console.warn("QR Scan Error:", error);
@@ -63,18 +96,15 @@ const QRScanner = () => {
     return () => {
       scanner.clear();
     };
-  }, []);
+  }, [isScanning]); // Dependency on isScanning to re-render the scanner
 
   return (
-    <div>
-      <h1>QR Code Scanner</h1>
+    <div className={styles.container}>
+      <Toaster />
+      {/* <h1 className={styles.header}>QR Code Scanner</h1> */}
       <div id="reader" style={{ width: "300px" }}></div>
-      {ticketID && <p>Scanned Ticket ID: {ticketID}</p>}
-      {validationResult && (
-        <div>
-          <h3>Validation Result:</h3>
-          <pre>{JSON.stringify(validationResult, null, 2)}</pre>
-        </div>
+      {ticketID && (
+        <p className={styles.ticketID}>Scanned Ticket ID: {ticketID}</p>
       )}
     </div>
   );
