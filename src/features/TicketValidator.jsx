@@ -11,7 +11,7 @@ const TicketValidator = () => {
       toast.loading("Validating ticket...");
 
       const response = await fetch(
-        `https://blank-lisha-adesire-private-limited-d3291de0.koyeb.app/ticketing/api/v1/ticket/check/${id}`,
+        `${import.meta.env.VITE_API_BASE_URL}/ticket/check/${id}`,
         {
           method: "GET",
         }
@@ -38,7 +38,13 @@ const TicketValidator = () => {
 
       // Validation success
       toast.dismiss(); // Dismiss the loading toast
-      toast.success("Ticket validated successfully!");
+      toast.success("Ticket validated successfully!", {
+        duration: 4000,
+        style: {
+          padding: "40px 40px",
+          marginTop: "15rem",
+        },
+      });
       setValidationResult({ success: true, ...data });
     } catch (error) {
       console.error("Validation error:", error);

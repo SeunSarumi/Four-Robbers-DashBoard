@@ -11,7 +11,7 @@ const QRScanner = () => {
   const validateTicket = async (id) => {
     try {
       const response = await fetch(
-        `https://blank-lisha-adesire-private-limited-d3291de0.koyeb.app/ticketing/api/v1/ticket/check/${id}`,
+        `${import.meta.env.VITE_API_BASE_URL}/ticket/check/${id}`,
         {
           method: "GET",
         }
@@ -43,7 +43,13 @@ const QRScanner = () => {
 
       // If the response is OK, update the validation result
       setValidationResult({ success: true, ...data });
-      toast.success("Ticket scanned successfully!");
+      toast.success("Ticket scanned successfully!", {
+        duration: 4000,
+        style: {
+          padding: "40px 40px",
+          marginTop: "15rem",
+        },
+      });
     } catch (error) {
       console.error("Validation error:", error);
       setValidationResult({
