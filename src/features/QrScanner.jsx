@@ -11,7 +11,7 @@ const QRScanner = () => {
   const validateTicket = async (id) => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/ticket/check/${id}`,
+        `${import.meta.env.VITE_API_BASE_URL}/ticket/scan/${id}`,
         {
           method: "GET",
         }
